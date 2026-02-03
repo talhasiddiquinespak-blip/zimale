@@ -668,30 +668,56 @@
                 window.addEventListener('scroll', resetIdle);
                 resetIdle();
 
+                const isMobile = window.innerWidth < 768;
+                const initialThreshold = 10; // Only need 10 frames to feel "interactive"
+
                 // Preload images
                 let loadedCount = 0;
+                let siteUnlocked = false;
+
                 const preload = () => {
                     const loaderBar = document.getElementById('loader-bar');
                     const loaderScreen = document.getElementById('loader');
 
+                    // Phase 1: Prioritize every 2nd frame for instant visual continuity
+                    const priorityFrames = [];
+                    const backgroundFrames = [];
                     for (let i = 0; i < totalFrames; i++) {
-                        const img = new Image();
-                        img.src = framePath(i);
-                        img.onload = () => {
-                            loadedCount++;
-                            const progress = (loadedCount / totalFrames) * 100;
-                            if (loaderBar) loaderBar.style.width = `${progress}%`;
-
-                            if (loadedCount === totalFrames) {
-                                if (loaderScreen) {
-                                    loaderScreen.style.opacity = '0';
-                                    setTimeout(() => loaderScreen.style.display = 'none', 1000);
-                                }
-                                initAnimation();
-                            }
-                        }
-                        framesRef.current[i] = img;
+                        if (i % 2 === 0) priorityFrames.push(i);
+                        else backgroundFrames.push(i);
                     }
+
+                    const loadFrame = (index, isPriority) => {
+                        const img = new Image();
+                        img.src = framePath(index);
+                        img.onload = () => {
+                            framesRef.current[index] = img;
+                            if (isPriority) {
+                                loadedCount++;
+                                const progress = (loadedCount / priorityFrames.length) * 100;
+                                if (loaderBar) loaderBar.style.width = `${progress}%`;
+
+                                if (index === 0) renderFrame(0);
+
+                                if (!siteUnlocked && loadedCount >= initialThreshold) {
+                                    siteUnlocked = true;
+                                    if (loaderScreen) {
+                                        loaderScreen.style.opacity = '0';
+                                        setTimeout(() => loaderScreen.style.display = 'none', 1000);
+                                    }
+                                    initAnimation();
+                                }
+                            }
+                        };
+                    };
+
+                    // Execute Phase 1
+                    priorityFrames.forEach(idx => loadFrame(idx, true));
+
+                    // Execute Phase 2: Fill in the gaps after the main site has had breath to breathe
+                    setTimeout(() => {
+                        backgroundFrames.forEach(idx => loadFrame(idx, false));
+                    }, 2000);
                 };
 
                 const resize = () => {
@@ -701,8 +727,25 @@
                 };
 
                 const renderFrame = (index) => {
-                    const img = framesRef.current[Math.floor(index)];
-                    if (img) {
+                    const frameIdx = Math.floor(index);
+                    // Find closest available frame if current is loading
+                    let img = framesRef.current[frameIdx];
+
+                    if (!img || !img.complete) { // Added !img.complete check
+                        // Fallback to closest loaded frame to prevent flickering
+                        for (let offset = 1; offset < 10; offset++) {
+                            if (framesRef.current[frameIdx - offset] && framesRef.current[frameIdx - offset].complete) {
+                                img = framesRef.current[frameIdx - offset];
+                                break;
+                            }
+                            if (framesRef.current[frameIdx + offset] && framesRef.current[frameIdx + offset].complete) { // Also check forward
+                                img = framesRef.current[frameIdx + offset];
+                                break;
+                            }
+                        }
+                    }
+
+                    if (img && img.complete) { // Ensure img is not null and is complete before drawing
                         const { width, height } = canvas;
                         const imgRatio = img.width / img.height;
                         const canvasRatio = width / height;
@@ -761,7 +804,7 @@
                             trigger: "#animation-trigger",
                             start: "top top",
                             end: "bottom bottom",
-                            scrub: 1.5,
+                            scrub: isMobile ? 1.8 : 1.5, // Heavier scrub on mobile to mask frame gaps
                         },
                         onUpdate: () => renderFrame(sequenceData.current.frame)
                     });
