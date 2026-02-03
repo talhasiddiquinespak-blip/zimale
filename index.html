@@ -49,6 +49,8 @@
             overflow-x: hidden;
             line-height: 1.6;
             cursor: none;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Custom Cursor */
@@ -275,6 +277,106 @@
 
         .nav-links a:hover {
             opacity: 1;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            width: 32px;
+            height: 24px;
+            justify-content: space-between;
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 200;
+        }
+
+        .mobile-menu-btn span {
+            width: 100%;
+            height: 2px;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            transform-origin: center;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: translateY(11px) rotate(45deg);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: translateY(-11px) rotate(-45deg);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .mobile-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .mobile-menu-links a {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-style: italic;
+            color: white;
+            text-decoration: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .mobile-menu.active .mobile-menu-links a {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-menu.active .mobile-menu-links a:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .mobile-menu.active .mobile-menu-links a:nth-child(2) {
+            transition-delay: 0.15s;
+        }
+
+        .mobile-menu.active .mobile-menu-links a:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        .mobile-menu.active .mobile-menu-links a:nth-child(4) {
+            transition-delay: 0.25s;
+        }
+
+        .mobile-menu.active .mobile-menu-links a:nth-child(5) {
+            transition-delay: 0.3s;
         }
 
         /* Scroller indicator */
@@ -513,6 +615,176 @@
             opacity: 1;
             letter-spacing: 0.1em;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+
+            /* Show mobile cursor on touch devices */
+            * {
+                cursor: auto !important;
+            }
+
+            body {
+                cursor: auto;
+            }
+
+            #custom-cursor,
+            #cursor-follower {
+                display: none;
+            }
+
+            /* Mobile Navigation */
+            nav {
+                padding: 1.5rem 1.5rem;
+            }
+
+            .nav-logo {
+                font-size: 1.2rem;
+                letter-spacing: 0.2em;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            /* Full-width canvas for mobile */
+            #canvas-container {
+                width: 100vw;
+                height: 100vh;
+                left: 0;
+                right: 0;
+            }
+
+            canvas {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* Mobile sections padding */
+            section {
+                padding: 0 5vw;
+                min-height: 100vh;
+            }
+
+            /* Mobile typography */
+            .hero-content h1 {
+                font-size: clamp(3rem, 15vw, 6rem) !important;
+            }
+
+            .hero-content p {
+                font-size: 0.65rem !important;
+                letter-spacing: 0.3em !important;
+            }
+
+            /* Mobile hotspots */
+            .hotspot-content {
+                width: 180px;
+            }
+
+            .hotspot-title {
+                font-size: 1rem;
+            }
+
+            .hotspot-desc {
+                font-size: 0.6rem;
+            }
+
+            /* Mobile flip cards */
+            .flip-card {
+                width: 100%;
+                max-width: 340px;
+                height: 420px;
+            }
+
+            .flip-card-front,
+            .flip-card-back {
+                padding: 2rem;
+            }
+
+            .flip-card p {
+                font-size: 1.2rem;
+            }
+
+            /* Mobile Buy Section */
+            .artifact-orb {
+                width: 280px;
+                height: 280px;
+                margin: 0 auto 2rem;
+            }
+
+            .buy-now-section h2 {
+                font-size: 2.5rem !important;
+            }
+
+            .buy-now-section p {
+                font-size: 0.75rem !important;
+            }
+
+            .btn-luxury {
+                padding: 1rem 2rem;
+                font-size: 0.7rem;
+                letter-spacing: 0.2em;
+            }
+
+            /* Mobile Science Section */
+            #science h2 {
+                font-size: 2rem !important;
+            }
+
+            #science .reveal-up {
+                max-width: 100% !important;
+            }
+
+            #science .serif-italic {
+                font-size: 1.2rem !important;
+            }
+
+            #science p {
+                font-size: 0.95rem !important;
+            }
+
+            /* Mobile Footer */
+            .restart-trigger {
+                font-size: 2rem;
+            }
+
+            .loop-footer>div {
+                flex-direction: column !important;
+                gap: 1rem !important;
+                text-align: center;
+            }
+
+            /* Hide vignette on mobile for better visibility */
+            .vignette {
+                opacity: 0.3;
+            }
+
+            /* Reduce edge blur on mobile */
+            .edge-blur {
+                box-shadow: inset 0 0 8vw 5vh rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            nav {
+                padding: 2rem 2.5rem;
+            }
+
+            section {
+                padding: 0 7vw;
+            }
+
+            .flip-card {
+                width: 320px;
+                height: 440px;
+            }
+        }
     </style>
 </head>
 
@@ -542,7 +814,23 @@
             <a href="#science">Essence</a>
             <a href="#about">Legacy</a>
         </div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-links">
+            <a href="#hero" class="mobile-menu-link">Genesis</a>
+            <a href="#buy" class="mobile-menu-link">Acquire</a>
+            <a href="#reviews" class="mobile-menu-link">Echos</a>
+            <a href="#science" class="mobile-menu-link">Essence</a>
+            <a href="#about" class="mobile-menu-link">Legacy</a>
+        </div>
+    </div>
 
     <div id="canvas-container">
         <canvas id="hero-canvas"></canvas>
@@ -553,6 +841,34 @@
     <div id="root"></div>
 
     <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+            });
+
+            // Close menu when a link is clicked
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenuBtn.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                });
+            });
+
+            // Close menu on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                    mobileMenuBtn.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        }
+
         const { useState, useEffect, useRef, useMemo } = React;
 
         const AnimatedCounter = ({ end, duration = 2 }) => {
